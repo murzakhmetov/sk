@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Service · Playground</title>
+  <style>
+    :root {
+      --bg: #f6f7f9; --panel: #ffffff; --text: #1d2330; --muted: #677085; --border: #dde1e8;
+      --accent: #2f6fed; --accent-text: #ffffff; --code-bg: #f1f3f7;
+      --ok: #1f8a4c; --info: #2563c9; --warn: #b7791f; --bad: #c53030;
+      --key: #8a3ffc; --str: #1f7a5c; --num: #b45309;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #12151b; --panel: #1a1e26; --text: #e6e9ef; --muted: #98a1b3; --border: #2c3240;
+        --accent: #5b8cff; --code-bg: #141821; --key: #c4a1ff; --str: #6fd3a8; --num: #f5b45a;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text);
+      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--panel); }
+    header h1 { margin: 0; font-size: 18px; }
+    header nav a { color: var(--muted); margin-left: 14px; text-decoration: none; font-size: 14px; }
+    header nav a:hover { color: var(--accent); }
+    main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px;
+      padding: 16px 20px; max-width: 1400px; margin: 0 auto; }
+    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+    section { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    h2 { margin: 0 0 12px; font-size: 15px; color: var(--muted); font-weight: 600; }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 4px; }
+    select, textarea { width: 100%; font: inherit; color: var(--text); background: var(--code-bg);
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+    textarea { resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px; }
+    #text { min-height: 120px; }
+    #params { min-height: 70px; }
+    .desc { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+    .chip { border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 999px;
+      padding: 3px 10px; font-size: 12.5px; cursor: pointer; max-width: 100%; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap; }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .mode { display: inline-flex; gap: 14px; font-size: 14px; }
+    .mode label { display: inline; margin: 0; color: var(--text); }
+    button.primary { background: var(--accent); color: var(--accent-text); border: 0; border-radius: 8px;
+      padding: 9px 18px; font: inherit; font-weight: 600; cursor: pointer; }
+    button.primary:disabled { opacity: .6; cursor: wait; }
+    .hint { color: var(--muted); font-size: 12.5px; }
+    .badge { display: inline-block; border-radius: 6px; padding: 1px 8px; font-size: 12px; font-weight: 700;
+      letter-spacing: .03em; color: #fff; }
+    .b-llm { background: var(--ok); } .b-cache { background: var(--info); }
+    .b-mock { background: var(--warn); } .b-fallback, .b-error { background: var(--bad); }
+    .stats { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .stats b { color: var(--text); font-weight: 600; }
+    pre { margin: 0; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px;
+      overflow: auto; font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap;
+      word-break: break-word; }
+    .k { color: var(--key); } .s { color: var(--str); } .n { color: var(--num); }
+    .error { border: 1px solid var(--bad); color: var(--bad); border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; }
+    .empty { color: var(--muted); font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 12px; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    details summary { cursor: pointer; color: var(--muted); font-size: 13px; margin: 8px 0; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>AI Service · Playground</h1>
+  <div id="status" class="hint">Подключение…</div>
+  <nav><a href="/docs">API docs</a><a href="/v1/usage">Расход</a><a href="/health">Health</a></nav>
+</header>
+
+<main>
+  <section aria-labelledby="form-title">
+    <h2 id="form-title">Запрос</h2>
+    <label for="task">Задача</label>
+    <select id="task"></select>
+    <p id="task-desc" class="desc"></p>
+
+    <div id="text-block">
+      <label for="text" id="text-label">Текст</label>
+      <textarea id="text" placeholder="Вставьте сообщение…"></textarea>
+      <div class="row">
+        <span class="mode" role="radiogroup" aria-label="Режим">
+          <label><input type="radio" name="mode" value="single" checked> Одно сообщение</label>
+          <label><input type="radio" name="mode" value="batch"> Пакет: одна строка — один элемент</label>
+        </span>
+      </div>
+    </div>
+
+    <label for="params">Остальные поля входа (JSON)</label>
+    <textarea id="params" spellcheck="false">{}</textarea>
+
+    <div class="row" id="examples" aria-label="Примеры"></div>
+
+    <div class="row">
+      <button id="send" class="primary">Отправить</button>
+      <span class="hint">Ctrl/⌘ + Enter</span>
+    </div>
+  </section>
+
+  <section aria-live="polite">
+    <h2>Ответ</h2>
+    <div id="result"><p class="empty">Выберите пример или вставьте текст и нажмите «Отправить».</p></div>
+  </section>
+</main>
+
+<script>
+  const $ = (sel) => document.querySelector(sel);
+  const BADGES = { llm: "LLM", cache: "КЭШ", mock: "MOCK", fallback: "FALLBACK" };
+  let tasks = [];
+
+  const escapeHtml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function highlight(value) {
+    const json = escapeHtml(JSON.stringify(value, null, 2));
+    return json.replace(/("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g,
+      (m, str, colon) => str ? (colon ? `<span class="k">${str}</span>${colon}` : `<span class="s">${str}</span>`)
+                             : `<span class="n">${m}</span>`);
+  }
+
+  function badge(source, title = "") {
+    return `<span class="badge b-${source}" title="${escapeHtml(title)}">${BADGES[source] || source.toUpperCase()}</span>`;
+  }
+
+  const fmtCost = (usd) => usd == null ? "n/a" : `$${usd.toFixed(usd < 0.01 ? 5 : 3)}`;
+  const current = () => tasks.find((t) => t.name === $("#task").value);
+
+  /** Name of the main free-text input field: the first required string property. */
+  function textField(task) {
+    const props = task.input_schema.properties || {};
+    return (task.input_schema.required || []).find((k) => props[k] && props[k].type === "string") || null;
+  }
+
+  function fillFromExample(task, example) {
+    const field = textField(task);
+    const rest = { ...example };
+    if (field) { $("#text").value = example[field] ?? ""; delete rest[field]; }
+    $("#params").value = JSON.stringify(rest, null, 2);
+  }
+
+  function selectTask() {
+    const task = current();
+    if (!task) return;
+    $("#task-desc").textContent = `${task.description} · модель: ${task.model}`;
+    const field = textField(task);
+    $("#text-block").hidden = !field;
+    if (field) $("#text-label").textContent = task.input_schema.properties[field].description || field;
+    $("#examples").innerHTML = "";
+    task.examples.forEach((ex) => {
+      const chip = document.createElement("button");
+      chip.className = "chip";
+      chip.textContent = (field ? ex[field] : JSON.stringify(ex)).slice(0, 48);
+      chip.title = JSON.stringify(ex);
+      chip.onclick = () => fillFromExample(task, ex);
+      $("#examples").append(chip);
+    });
+    if (task.examples.length) fillFromExample(task, task.examples[0]);
+  }
+
+  function buildBody(task, batch) {
+    let params;
+    try { params = JSON.parse($("#params").value || "{}"); }
+    catch (e) { throw new Error(`Поле «Остальные поля входа» — невалидный JSON: ${e.message}`); }
+    const field = textField(task);
+    if (!field) return { body: params, batch: false };
+    if (!batch) return { body: { ...params, [field]: $("#text").value }, batch: false };
+    const lines = $("#text").value.split("\n").map((l) => l.trim()).filter(Boolean);
+    return { body: { items: lines.map((l) => ({ ...params, [field]: l })) }, batch: true, field };
+  }
+
+  function renderSingle(data, clientMs) {
+    const m = data.meta;
+    $("#result").innerHTML = `
+      <div class="stats">
+        ${badge(m.source, m.error || "")}
+        <span>Сервер: <b>${m.latency_ms.toFixed(0)} мс</b></span>
+        <span>Клиент: <b>${clientMs.toFixed(0)} мс</b></span>
+        <span>Токены: <b>${m.input_tokens + m.cache_read_tokens + m.cache_write_tokens} / ${m.output_tokens}</b></span>
+        <span>Стоимость: <b>${fmtCost(m.cost_usd)}</b></span>
+        <span>Модель: <b>${escapeHtml(m.model)}</b></span>
+      </div>
+      ${m.error ? `<p class="error">LLM недоступна, ответ эвристики: ${escapeHtml(m.error)}</p>` : ""}
+      <pre>${highlight(data.output)}</pre>
+      <details><summary>Полный ответ API</summary><pre>${highlight(data)}</pre></details>`;
+  }
+
+  function renderBatch(data, items, field, clientMs) {
+    const s = data.summary;
+    const cols = [...new Set(data.results.flatMap((r) => r.output ? Object.keys(r.output) : []))]
+      .filter((k) => data.results.every((r) => !r.output || typeof r.output[k] !== "object"));
+    const rows = data.results.map((r, i) => `<tr>
+        <td>${escapeHtml(items[i][field])}</td>
+        ${r.output ? cols.map((c) => `<td>${escapeHtml(r.output[c])}</td>`).join("")
+                   : `<td colspan="${cols.length}" class="error">${escapeHtml(r.error)}</td>`}
+        <td>${r.meta ? badge(r.meta.source, r.meta.error || "") : badge("error")}</td></tr>`).join("");
+    $("#result").innerHTML = `
+      <div class="stats">
+        <span>Элементов: <b>${s.total}</b> (ошибок: <b>${s.failed}</b>)</span>
+        <span>Сервер: <b>${s.wall_time_ms.toFixed(0)} мс</b></span>
+        <span>Клиент: <b>${clientMs.toFixed(0)} мс</b></span>
+        <span>Токены: <b>${s.usage.input_tokens} / ${s.usage.output_tokens}</b></span>
+        <span>Потрачено: <b>${fmtCost(s.usage.cost_usd)}</b></span>
+      </div>
+      <table><thead><tr><th>${escapeHtml(field)}</th>${cols.map((c) => `<th>${escapeHtml(c)}</th>`).join("")}<th>источник</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+      <details><summary>Полный ответ API</summary><pre>${highlight(data)}</pre></details>`;
+  }
+
+  async function send() {
+    const task = current();
+    if (!task) return;
+    const batchMode = document.querySelector('input[name="mode"]:checked').value === "batch";
+    let req;
+    try { req = buildBody(task, batchMode); }
+    catch (e) { $("#result").innerHTML = `<p class="error">${escapeHtml(e.message)}</p>`; return; }
+    if (req.batch && !req.body.items.length) {
+      $("#result").innerHTML = `<p class="error">Пакет пуст: добавьте хотя бы одну строку.</p>`; return;
+    }
+    const url = `/v1/tasks/${encodeURIComponent(task.name)}${req.batch ? "/batch" : ""}`;
+    $("#send").disabled = true;
+    $("#result").innerHTML = `<p class="empty">Отправка…</p>`;
+    const started = performance.now();
+    try {
+      const resp = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(req.body) });
+      const data = await resp.json().catch(() => ({ detail: resp.statusText }));
+      const clientMs = performance.now() - started;
+      if (!resp.ok) {
+        const detail = typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail, null, 2);
+        $("#result").innerHTML = `<p class="error">HTTP ${resp.status}\n${escapeHtml(detail)}</p>`;
+      } else if (req.batch) {
+        renderBatch(data, req.body.items, req.field, clientMs);
+      } else {
+        renderSingle(data, clientMs);
+      }
+    } catch (e) {
+      $("#result").innerHTML = `<p class="error">Сеть недоступна: ${escapeHtml(e.message)}</p>`;
+    } finally {
+      $("#send").disabled = false;
+    }
+  }
+
+  async function init() {
+    try {
+      const [health, list] = await Promise.all([fetch("/health").then((r) => r.json()), fetch("/v1/tasks").then((r) => r.json())]);
+      tasks = list;
+      $("#status").innerHTML = `${badge(health.mock ? "mock" : "llm")} ${escapeHtml(health.provider)} · ${escapeHtml(health.model)}`
+        + (health.mock ? " · <span class='hint'>без ключа: ответы эвристики</span>" : "");
+      $("#task").innerHTML = tasks.map((t) => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.title)}</option>`).join("");
+      selectTask();
+    } catch (e) {
+      $("#status").innerHTML = `<span class="error">Сервис недоступен: ${escapeHtml(e.message)}</span>`;
+    }
+  }
+
+  $("#task").addEventListener("change", selectTask);
+  $("#send").addEventListener("click", send);
+  document.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") send(); });
+  init();
+</script>
+</body>
+</html>

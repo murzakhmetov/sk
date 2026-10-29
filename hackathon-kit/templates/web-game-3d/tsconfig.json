@@ -1,0 +1,23 @@
+{
+  // Server side: api/ (Vercel functions), dev/ (Vite plugin), scripts/, vite.config.ts.
+  // NodeNext resolution enforces the explicit `.js` import specifiers that native ESM
+  // needs at runtime on Vercel. The browser app has its own config in src/tsconfig.json.
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["api", "dev", "scripts", "vite.config.ts"]
+}

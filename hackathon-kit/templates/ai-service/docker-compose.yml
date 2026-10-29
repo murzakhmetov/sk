@@ -1,0 +1,17 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false # without .env the service starts in mock mode
+    environment:
+      PORT: "8000"
+      CACHE_DIR: /srv/.cache/llm
+    volumes:
+      - llm-cache:/srv/.cache
+    restart: unless-stopped
+
+volumes:
+  llm-cache:

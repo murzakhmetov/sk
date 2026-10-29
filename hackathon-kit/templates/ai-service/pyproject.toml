@@ -1,0 +1,28 @@
+# Tool configuration only; dependencies live in requirements*.txt.
+[project]
+name = "ai-service"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # Cyrillic text is intentional
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["app", "evals", "ml", "scripts", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*", "pandas.*"]
+ignore_missing_imports = true

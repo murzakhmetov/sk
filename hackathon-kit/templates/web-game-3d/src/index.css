@@ -1,0 +1,455 @@
+:root {
+  --panel-bg: rgba(14, 19, 28, 0.78);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text: #eef2f6;
+  --text-muted: #9aa6b4;
+  --accent: #ffb547;
+  --positive: #3ccf8e;
+  --negative: #ff5d5d;
+  --player-bubble: #2d6cdf;
+  --npc-bubble: rgba(255, 255, 255, 0.1);
+  --radius: 12px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: #101722;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  user-select: none;
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  font-size: 18px;
+}
+
+.game-canvas {
+  position: absolute !important;
+  inset: 0;
+  /* Own stacking context: drei <Html> name tags stay below the HUD and dialog. */
+  z-index: 0;
+  touch-action: none;
+}
+
+/* ---------- Shared panel ---------- */
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.panel h2 {
+  margin: 10px 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.muted {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ---------- HUD ---------- */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hud-status {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: min(280px, calc(100vw - 32px));
+  padding: 12px 14px;
+}
+
+.hud-money {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--positive);
+  font-variant-numeric: tabular-nums;
+}
+
+.quest-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.quest-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.quest-list small {
+  color: var(--text-muted);
+}
+
+.reward {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.hud-log {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: min(320px, calc(100vw - 32px));
+  padding: 4px 14px 10px;
+}
+
+.hud-log ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.hud-log li:not(:first-child) {
+  opacity: 0.7;
+}
+
+.controls-hint {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--panel-bg);
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ---------- Interaction prompt & name tags ---------- */
+
+.prompt {
+  position: absolute;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--panel-bg);
+  border: 1px solid var(--accent);
+  font-size: 16px;
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 26px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #1b1405;
+  font: inherit;
+  font-weight: 800;
+  text-align: center;
+}
+
+.prompt-target {
+  margin-left: 6px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.nametag {
+  display: grid;
+  justify-items: center;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(14, 19, 28, 0.72);
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 1.25;
+  pointer-events: none;
+}
+
+.nametag span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.nametag-active {
+  outline: 2px solid var(--accent);
+}
+
+.nametag-zone {
+  color: #38d6a0;
+  font-weight: 700;
+}
+
+/* ---------- Dialog ---------- */
+
+.dialog {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: min(420px, calc(100vw - 32px));
+  height: min(520px, calc(100vh - 140px));
+  display: flex;
+  flex-direction: column;
+  user-select: text;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.dialog-emotion {
+  font-size: 30px;
+}
+
+.dialog-title {
+  display: grid;
+  min-width: 0;
+}
+
+.dialog-title small {
+  color: var(--text-muted);
+}
+
+.relationship {
+  margin-left: auto;
+  width: 120px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.relationship-bar {
+  position: relative;
+  height: 6px;
+  margin-top: 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.relationship-bar::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.relationship-bar span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition: width 0.4s ease;
+}
+
+.relationship-bar .positive {
+  background: var(--positive);
+}
+
+.relationship-bar .negative {
+  background: var(--negative);
+}
+
+.icon-button {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dialog-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  max-width: 85%;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.message-npc {
+  align-self: flex-start;
+  background: var(--npc-bubble);
+  border-bottom-left-radius: 4px;
+}
+
+.message-player {
+  align-self: flex-end;
+  background: var(--player-bubble);
+  border-bottom-right-radius: 4px;
+}
+
+.message-typing {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.message-source {
+  margin-left: 8px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: rgba(255, 181, 71, 0.2);
+  color: var(--accent);
+  font-size: 10px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.dialog-input {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.dialog-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px; /* 16px prevents the iOS zoom-on-focus */
+}
+
+.dialog-input button {
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #1b1405;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dialog-input button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---------- Touch controls ---------- */
+
+.touch-controls {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 0;
+}
+
+.joystick {
+  position: absolute;
+  left: 28px;
+  bottom: 28px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  touch-action: none;
+}
+
+.joystick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
+
+.touch-buttons {
+  position: absolute;
+  right: 24px;
+  bottom: 28px;
+  display: grid;
+  grid-template-columns: repeat(2, 64px);
+  gap: 12px;
+}
+
+.touch-buttons button {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(14, 19, 28, 0.6);
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 800;
+  touch-action: none;
+}
+
+.touch-buttons .touch-jump {
+  grid-column: span 2;
+  justify-self: end;
+}
+
+@media (max-width: 640px) {
+  .hud-log {
+    display: none;
+  }
+
+  .dialog {
+    right: 8px;
+    left: 8px;
+    bottom: 8px;
+    width: auto;
+    height: min(60vh, 460px);
+  }
+}

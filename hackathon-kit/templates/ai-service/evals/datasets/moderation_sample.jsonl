@@ -1,0 +1,38 @@
+{"id": "ok-01", "input": {"text": "Кто едет на работу дальнобойщиком? Возьмите в напарники"}, "expected": {"label": "ok", "action": "none"}, "tags": ["baseline"], "source": "synthetic"}
+{"id": "ok-02", "input": {"text": "Продам Приору в хорошем состоянии, 1.5кк, торг у банка"}, "expected": {"label": "ok", "action": "none"}, "tags": ["trade", "slang"], "source": "synthetic"}
+{"id": "ok-03", "input": {"text": "Руки вверх! Это ограбление, выкладывай всё из карманов"}, "expected": {"label": "ok", "action": "none"}, "tags": ["rp_context", "precision"], "source": "synthetic"}
+{"id": "ok-04", "input": {"text": "бля, опять в пробке застрял на мосту"}, "expected": {"label": "ok", "action": "none"}, "tags": ["swearing_untargeted", "precision"], "source": "synthetic"}
+{"id": "ok-05", "input": {"text": "го на капт в 20:00, фракция сбор у штаба"}, "expected": {"label": "ok", "action": "none"}, "tags": ["slang"], "source": "synthetic"}
+{"id": "ok-06", "input": {"text": "ну ты и нуб, ахах, давай реванш"}, "expected": {"label": "ok", "action": "none"}, "tags": ["banter", "precision"], "source": "synthetic"}
+{"id": "ok-07", "input": {"text": "ребят, сколько стоит лицензия на оружие?"}, "expected": {"label": "ok", "action": "none"}, "tags": ["baseline"], "source": "synthetic"}
+{"id": "ok-08", "input": {"text": "лагает сервер у кого-нибудь ещё?", "channel": "ooc"}, "expected": {"label": "ok", "action": "none"}, "tags": ["channel", "precision"], "source": "synthetic"}
+{"id": "ok-09", "input": {"text": "Сейчас приеду и разнесу вашу банду, готовьтесь к войне за район"}, "expected": {"label": "ok", "action": "none"}, "tags": ["rp_context", "precision"], "source": "synthetic"}
+{"id": "ok-10", "input": {"text": "ты труп, наша банда убьёт тебя на капте сегодня"}, "expected": {"label": "ok", "action": "none"}, "tags": ["rp_context", "precision"], "source": "synthetic"}
+{"id": "ins-01", "input": {"text": "ты дебил? куда ты едешь"}, "expected": {"label": "insult", "action": "warn"}, "tags": ["baseline"], "source": "synthetic"}
+{"id": "ins-02", "input": {"text": "д е б и л ты конченый"}, "expected": {"label": "insult", "action": "mute"}, "tags": ["obfuscation", "spacing"], "source": "synthetic"}
+{"id": "ins-03", "input": {"text": "иди нах*й, урод"}, "expected": {"label": "insult", "action": "mute"}, "tags": ["obfuscation", "censored"], "source": "synthetic"}
+{"id": "ins-04", "input": {"text": "сyка тyпая, вали с сервера"}, "expected": {"label": "insult", "action": "mute"}, "tags": ["obfuscation", "mixed_script"], "source": "synthetic"}
+{"id": "ins-05", "input": {"text": "4мо ты, а не водитель"}, "expected": {"label": "insult", "action": "warn"}, "tags": ["obfuscation", "leet"], "source": "synthetic"}
+{"id": "ins-06", "input": {"text": "ты d0лб0ёб полный"}, "expected": {"label": "insult", "action": "mute"}, "tags": ["obfuscation", "leet", "mixed_script"], "source": "synthetic"}
+{"id": "ins-07", "input": {"text": "ақымақ, кімге айтып тұрсың?"}, "expected": {"label": "insult", "action": "warn"}, "tags": ["kazakh"], "source": "synthetic"}
+{"id": "ins-08", "input": {"text": "с твоим интеллектом только навигатор и слушать, и то не поможет"}, "expected": {"label": "insult", "action": "warn"}, "tags": ["implicit", "hard"], "source": "synthetic"}
+{"id": "spm-01", "input": {"text": "ПРОДАЮ ВИРТЫ ДЕШЕВО 1КК = 50Р ПИШИ В ТГ @virt_shop"}, "expected": {"label": "spam_ads", "action": "mute"}, "tags": ["rmt"], "source": "synthetic"}
+{"id": "spm-02", "input": {"text": "Заходите на наш новый проект Black RP, бонус 5кк новичкам! discord.gg/blackrp"}, "expected": {"label": "spam_ads", "action": "mute"}, "tags": ["ads", "link"], "source": "synthetic"}
+{"id": "spm-03", "input": {"text": "вирты по 30₽ за лям, гарант, пиши в лс"}, "expected": {"label": "spam_ads", "action": "mute"}, "tags": ["rmt", "slang"], "source": "synthetic"}
+{"id": "spm-04", "input": {"text": "КУПЛЮ ДОМ КУПЛЮ ДОМ КУПЛЮ ДОМ КУПЛЮ ДОМ"}, "expected": {"label": "spam_ads", "action": "warn"}, "tags": ["flood"], "source": "synthetic"}
+{"id": "spm-05", "input": {"text": "лучший сервер тут: blackrp точка ру, залетай"}, "expected": {"label": "spam_ads", "action": "mute"}, "tags": ["ads", "obfuscation"], "source": "synthetic"}
+{"id": "scm-01", "input": {"text": "Раздаю 10кк первым 5 игрокам, просто скиньте логин и пароль в лс"}, "expected": {"label": "scam", "action": "escalate"}, "tags": ["phishing"], "source": "synthetic"}
+{"id": "scm-02", "input": {"text": "переведи мне 500к, верну 1кк через час, отвечаю"}, "expected": {"label": "scam", "action": "mute"}, "tags": ["doubling"], "source": "synthetic"}
+{"id": "scm-03", "input": {"text": "Я из администрации, для проверки аккаунта нужен код из смс"}, "expected": {"label": "scam", "action": "escalate"}, "tags": ["impersonation"], "source": "synthetic"}
+{"id": "scm-04", "input": {"text": "Бесплатный донат тут: grand-mobile-gift.ru, вводишь данные аккаунта и забираешь"}, "expected": {"label": "scam", "action": "escalate"}, "tags": ["phishing", "link"], "source": "synthetic"}
+{"id": "scm-05", "input": {"text": "кто хочет халявный дом? отдам ключи, только скинь залог 300к, потом верну"}, "expected": {"label": "scam", "action": "mute"}, "tags": ["implicit", "hard"], "source": "synthetic"}
+{"id": "cht-01", "input": {"text": "у кого есть чит на деньги? скиньте ссылку"}, "expected": {"label": "cheat_talk", "action": "warn"}, "tags": ["baseline"], "source": "synthetic"}
+{"id": "cht-02", "input": {"text": "Продаю мод меню с аимом и вх, обход античита, 300р"}, "expected": {"label": "cheat_talk", "action": "escalate"}, "tags": ["selling"], "source": "synthetic"}
+{"id": "cht-03", "input": {"text": "кто знает баг на дюп денег у банкомата?"}, "expected": {"label": "cheat_talk", "action": "warn"}, "tags": ["exploit"], "source": "synthetic"}
+{"id": "nrp-01", "input": {"text": "го в дискорд, там голосом договоримся"}, "expected": {"label": "nonrp", "action": "warn"}, "tags": ["baseline"], "source": "synthetic"}
+{"id": "nrp-02", "input": {"text": "сорян, я с телефона, у меня фпс 10"}, "expected": {"label": "nonrp", "action": "warn"}, "tags": ["baseline"], "source": "synthetic"}
+{"id": "nrp-03", "input": {"text": "сколько тебе лет в реале? мне 14"}, "expected": {"label": "nonrp", "action": "warn"}, "tags": ["baseline"], "source": "synthetic"}
+{"id": "thr-01", "input": {"text": "я тебя по айпи вычислю и приеду, понял?"}, "expected": {"label": "threat", "action": "escalate"}, "tags": ["doxxing"], "source": "synthetic"}
+{"id": "thr-02", "input": {"text": "знаю где ты живёшь, жди гостей"}, "expected": {"label": "threat", "action": "escalate"}, "tags": ["doxxing"], "source": "synthetic"}
+{"id": "thr-03", "input": {"text": "уб*ю тебя в реале, найду через вк"}, "expected": {"label": "threat", "action": "escalate"}, "tags": ["obfuscation", "censored"], "source": "synthetic"}
+{"id": "thr-04", "input": {"text": "смотри, как бы с тобой в реальной жизни чего не случилось"}, "expected": {"label": "threat", "action": "escalate"}, "tags": ["implicit", "hard"], "source": "synthetic"}
